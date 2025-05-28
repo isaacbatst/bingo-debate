@@ -13,6 +13,27 @@ export default function DebateBingo() {
   const [venceu, setVenceu] = useState(false)
   const [pontuacao, setPontuacao] = useState(0)
 
+  // Adicione este estilo no início do componente, após os imports
+  const styles = `
+  .line-clamp-3 {
+    display: -webkit-box;
+    -webkit-line-clamp: 3;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+  }
+  .line-clamp-4 {
+    display: -webkit-box;
+    -webkit-line-clamp: 4;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+  }
+  @media (max-width: 480px) {
+    .line-clamp-3 {
+      -webkit-line-clamp: 2;
+    }
+  }
+`
+
   // Gerar cartela aleatória
   const gerarCartela = () => {
     const frasesEmbaralhadas = [...FRASES].sort(() => Math.random() - 0.5)
@@ -67,25 +88,26 @@ export default function DebateBingo() {
   }, [])
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-purple-900 via-blue-900 to-indigo-900 p-4">
+    <div className="min-h-screen bg-gradient-to-br from-purple-900 via-blue-900 to-indigo-900 p-2 sm:p-4">
+      <style dangerouslySetInnerHTML={{ __html: styles }} />
       <div className="max-w-4xl mx-auto">
         {/* Header */}
-        <div className="text-center mb-6">
-          <h1 className="text-4xl font-bold text-white mb-2 flex items-center justify-center gap-2">
-            <Sparkles className="text-yellow-400" />
+        <div className="text-center mb-4 sm:mb-6">
+          <h1 className="text-2xl sm:text-4xl font-bold text-white mb-2 flex items-center justify-center gap-2">
+            <Sparkles className="text-yellow-400 w-5 h-5 sm:w-6 sm:h-6" />
             BINGO DO DEBATE
-            <Sparkles className="text-yellow-400" />
+            <Sparkles className="text-yellow-400 w-5 h-5 sm:w-6 sm:h-6" />
           </h1>
-          <p className="text-gray-300">Marque as frases conforme aparecem no debate!</p>
+          <p className="text-gray-300 text-sm sm:text-base">Marque as frases conforme aparecem no debate!</p>
         </div>
 
         {/* Stats */}
-        <div className="flex justify-center gap-4 mb-6">
-          <Badge variant="secondary" className="text-lg px-4 py-2">
+        <div className="flex justify-center gap-2 sm:gap-4 mb-4 sm:mb-6">
+          <Badge variant="secondary" className="text-sm sm:text-lg px-2 sm:px-4 py-1 sm:py-2">
             Marcadas: {pontuacao}/25
           </Badge>
-          <Button onClick={gerarCartela} variant="outline" className="gap-2">
-            <RotateCcw className="w-4 h-4" />
+          <Button onClick={gerarCartela} variant="outline" className="gap-2 text-sm sm:text-base">
+            <RotateCcw className="w-3 h-3 sm:w-4 sm:h-4" />
             Nova Cartela
           </Button>
         </div>
@@ -93,14 +115,16 @@ export default function DebateBingo() {
         {/* Bingo Grid */}
         <Card className="mb-6 bg-white/10 backdrop-blur border-white/20">
           <CardContent className="p-6">
-            <div className="grid grid-cols-5 gap-2">
+            <div className="grid grid-cols-5 gap-1 sm:gap-2">
               {cartela.map((frase, index) => (
                 <button
                   key={index}
                   onClick={() => toggleCelula(index)}
                   className={`
-                    aspect-square p-2 rounded-lg border-2 transition-all duration-300 text-xs font-medium
+                    aspect-square p-1 sm:p-2 rounded-md sm:rounded-lg border-2 transition-all duration-300 
+                    text-[8px] xs:text-[9px] sm:text-xs font-medium
                     flex items-center justify-center text-center leading-tight
+                    overflow-hidden relative group
                     ${
                       marcadas[index]
                         ? "bg-green-500 border-green-400 text-white shadow-lg transform scale-105"
@@ -109,8 +133,11 @@ export default function DebateBingo() {
                     ${venceu ? "cursor-not-allowed" : "cursor-pointer"}
                   `}
                   disabled={venceu}
+                  title={frase} // Tooltip para ver frase completa
                 >
-                  {frase}
+                  <span className="sm:line-clamp-4 hyphens-auto text-center w-full">
+                    {frase}
+                  </span>
                 </button>
               ))}
             </div>
@@ -140,7 +167,8 @@ export default function DebateBingo() {
           <CardContent className="text-gray-300 text-center space-y-2">
             <p>• Clique nas células quando ouvir as frases durante o debate</p>
             <p>• Vença completando uma linha, coluna, diagonal ou cartela inteira</p>
-            <p>• Use o botão &quot;Nova Cartela&quot; para embaralhar as frases</p>
+            <p>• Use o botão "Nova Cartela" para embaralhar as frases</p>
+            <p>• Edite o array FRASES_DEBATE no código para personalizar</p>
           </CardContent>
         </Card>
       </div>
