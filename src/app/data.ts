@@ -48,5 +48,7 @@ export const FRASES = [
   "Nunca vi pobre empreendedor reclamar",
   "Comunismo só gera miséria",
   "A esquerda quer destruir a família",
-  "O problema é o comunismo cultural"
+  "O problema é o comunismo cultural",
+  "E o petrolão?",	
+  "E o INSS?",
 ]
