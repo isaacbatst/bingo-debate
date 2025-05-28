@@ -141,7 +141,6 @@ export default function DebateBingo() {
             <p>• Clique nas células quando ouvir as frases durante o debate</p>
             <p>• Vença completando uma linha, coluna, diagonal ou cartela inteira</p>
             <p>• Use o botão &quot;Nova Cartela&quot; para embaralhar as frases</p>
-            <p>• Edite o array FRASES_DEBATE no código para personalizar</p>
           </CardContent>
         </Card>
       </div>
