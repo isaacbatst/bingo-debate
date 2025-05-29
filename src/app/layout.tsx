@@ -1,17 +1,7 @@
+import { Analytics } from "@vercel/analytics/next";
 import type { Metadata } from "next";
-import { Bangers, Geist, Geist_Mono, Rubik } from "next/font/google";
+import { Bangers, Geist, Geist_Mono } from "next/font/google";
 import "./globals.css";
-import { Analytics } from "@vercel/analytics/next"
-
-const geistSans = Geist({
-  variable: "--font-geist-sans",
-  subsets: ["latin"],
-});
-
-const geistMono = Geist_Mono({
-  variable: "--font-geist-mono",
-  subsets: ["latin"],
-});
 
 const bangers = Bangers({
   weight: "400",
