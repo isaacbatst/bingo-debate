@@ -250,7 +250,7 @@ export default function DebateBingo() {
           <CardContent className="text-gray-300 text-center space-y-2">
             <p>• Clique nas células quando ouvir as frases durante o debate</p>
             <p>• Vença completando uma linha, coluna, diagonal ou cartela inteira</p>
-            <p>• Use o botão "Nova Cartela" para embaralhar as frases</p>
+            <p>• Use o botão Nova Cartela para embaralhar as frases</p>
           </CardContent>
         </Card>
 
