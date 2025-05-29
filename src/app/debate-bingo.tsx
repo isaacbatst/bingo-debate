@@ -136,7 +136,7 @@ export default function DebateBingo() {
 
   // Copiar PIX
   const copiarPix = async () => {
-    const chavePix = "seu-pix-aqui@email.com" // Substitua pela sua chave PIX
+    const chavePix = "e4aef5ee-24fc-4591-b4d3-d31740464256" // Substitua pela sua chave PIX
     try {
       await navigator.clipboard.writeText(chavePix)
       setPixCopiado(true)
