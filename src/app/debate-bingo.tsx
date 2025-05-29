@@ -7,6 +7,7 @@ import { Badge } from "@/components/ui/badge"
 import { Trophy, RotateCcw, Sparkles } from "lucide-react"
 import { Copy, Check, Heart, Coffee } from "lucide-react"
 import { FRASES } from "./data"
+import { Rubik } from "next/font/google"
 
 // Chaves para localStorage
 const STORAGE_KEYS = {
@@ -49,6 +50,12 @@ const carregarEstado = () => {
   }
   return null
 }
+
+const rubik = Rubik({
+  variable: "--font-rubik",
+  subsets: ["latin"],
+  display: "swap",
+});
 
 export default function DebateBingo() {
   const [cartela, setCartela] = useState<string[]>([])
@@ -198,7 +205,7 @@ export default function DebateBingo() {
         {/* Bingo Grid */}
         <Card className="mb-6 bg-white/10 backdrop-blur border-white/20">
           <CardContent className="p-6">
-            <div className="grid grid-cols-5 gap-1 sm:gap-2">
+            <div className={`grid grid-cols-5 gap-1 sm:gap-2 ${rubik.variable} ${rubik.className}`}>
               {cartela.map((frase, index) => (
                 <button
                   key={index}

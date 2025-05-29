@@ -1,5 +1,5 @@
 import type { Metadata } from "next";
-import { Geist, Geist_Mono } from "next/font/google";
+import { Bangers, Geist, Geist_Mono, Rubik } from "next/font/google";
 import "./globals.css";
 import { Analytics } from "@vercel/analytics/next"
 
@@ -12,6 +12,12 @@ const geistMono = Geist_Mono({
   variable: "--font-geist-mono",
   subsets: ["latin"],
 });
+
+const bangers = Bangers({
+  weight: "400",
+  variable: "--font-bangers",
+  subsets: ["latin"],
+})
 
 export const metadata: Metadata = {
   title: "Bingo do Debate",
@@ -28,7 +34,7 @@ export default function RootLayout({
       <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-5160546340699166"
         crossOrigin="anonymous"></script>
       <body
-        className={`${geistSans.variable} ${geistMono.variable} antialiased`}
+        className={`${bangers.variable} ${bangers.className} antialiased`}
       >
         {children}
         <Analytics />
