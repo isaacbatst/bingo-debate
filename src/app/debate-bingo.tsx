@@ -141,7 +141,7 @@ export default function DebateBingo() {
       await navigator.clipboard.writeText(chavePix)
       setPixCopiado(true)
       setTimeout(() => setPixCopiado(false), 2000)
-    } catch (err) {
+    } catch {
       // Fallback para dispositivos que não suportam clipboard API
       const textArea = document.createElement("textarea")
       textArea.value = chavePix
