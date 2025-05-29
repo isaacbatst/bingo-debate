@@ -218,7 +218,7 @@ export default function DebateBingo() {
                   disabled={venceu}
                   title={frase} // Tooltip para ver frase completa
                 >
-                  <span className="line-clamp-3 sm:line-clamp-4 break-words hyphens-auto text-center w-full">
+                  <span className="sm:line-clamp-4 break-words hyphens-auto text-center w-full">
                     {frase}
                   </span>
                 </button>
