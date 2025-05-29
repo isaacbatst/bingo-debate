@@ -5,13 +5,74 @@ import { Button } from "@/components/ui/button"
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import { Badge } from "@/components/ui/badge"
 import { Trophy, RotateCcw, Sparkles } from "lucide-react"
+import { Copy, Check, Heart, Coffee } from "lucide-react"
 import { FRASES } from "./data"
+
+// Chaves para localStorage
+const STORAGE_KEYS = {
+  cartela: "debate-bingo-cartela",
+  marcadas: "debate-bingo-marcadas",
+  pontuacao: "debate-bingo-pontuacao",
+  venceu: "debate-bingo-venceu",
+}
+
+// Salvar estado no localStorage
+const salvarEstado = (cartela: string[], marcadas: boolean[], pontuacao: number, venceu: boolean) => {
+  try {
+    localStorage.setItem(STORAGE_KEYS.cartela, JSON.stringify(cartela))
+    localStorage.setItem(STORAGE_KEYS.marcadas, JSON.stringify(marcadas))
+    localStorage.setItem(STORAGE_KEYS.pontuacao, pontuacao.toString())
+    localStorage.setItem(STORAGE_KEYS.venceu, venceu.toString())
+  } catch (error) {
+    console.warn("Erro ao salvar no localStorage:", error)
+  }
+}
+
+// Carregar estado do localStorage
+const carregarEstado = () => {
+  try {
+    const cartelaStr = localStorage.getItem(STORAGE_KEYS.cartela)
+    const marcadasStr = localStorage.getItem(STORAGE_KEYS.marcadas)
+    const pontuacaoStr = localStorage.getItem(STORAGE_KEYS.pontuacao)
+    const venceuStr = localStorage.getItem(STORAGE_KEYS.venceu)
+
+    if (cartelaStr && marcadasStr && pontuacaoStr && venceuStr) {
+      return {
+        cartela: JSON.parse(cartelaStr),
+        marcadas: JSON.parse(marcadasStr),
+        pontuacao: Number.parseInt(pontuacaoStr),
+        venceu: venceuStr === "true",
+      }
+    }
+  } catch (error) {
+    console.warn("Erro ao carregar do localStorage:", error)
+  }
+  return null
+}
 
 export default function DebateBingo() {
   const [cartela, setCartela] = useState<string[]>([])
   const [marcadas, setMarcadas] = useState<boolean[]>(Array(25).fill(false))
   const [venceu, setVenceu] = useState(false)
   const [pontuacao, setPontuacao] = useState(0)
+  const [pixCopiado, setPixCopiado] = useState(false)
+
+  // Gerar cartela aleatória
+  const gerarCartela = () => {
+    const frasesEmbaralhadas = [...FRASES].sort(() => Math.random() - 0.5)
+    const novaCartela = frasesEmbaralhadas.slice(0, 25)
+    const novasMarcadas = Array(25).fill(false)
+    const novaPontuacao = 0
+    const novoVenceu = false
+
+    setCartela(novaCartela)
+    setMarcadas(novasMarcadas)
+    setVenceu(novoVenceu)
+    setPontuacao(novaPontuacao)
+
+    // Salvar no localStorage
+    salvarEstado(novaCartela, novasMarcadas, novaPontuacao, novoVenceu)
+  }
 
   // Adicione este estilo no início do componente, após os imports
   const styles = `
@@ -33,16 +94,6 @@ export default function DebateBingo() {
     }
   }
 `
-
-  // Gerar cartela aleatória
-  const gerarCartela = () => {
-    const frasesEmbaralhadas = [...FRASES].sort(() => Math.random() - 0.5)
-    const novaCartela = frasesEmbaralhadas.slice(0, 25)
-    setCartela(novaCartela)
-    setMarcadas(Array(25).fill(false))
-    setVenceu(false)
-    setPontuacao(0)
-  }
 
   // Verificar vitória
   const verificarVitoria = (novasMarcadas: boolean[]) => {
@@ -72,19 +123,51 @@ export default function DebateBingo() {
 
     const novasMarcadas = [...marcadas]
     novasMarcadas[index] = !novasMarcadas[index]
-    setMarcadas(novasMarcadas)
-
     const novaPontuacao = novasMarcadas.filter(Boolean).length
-    setPontuacao(novaPontuacao)
+    const novoVenceu = verificarVitoria(novasMarcadas)
 
-    if (verificarVitoria(novasMarcadas)) {
-      setVenceu(true)
+    setMarcadas(novasMarcadas)
+    setPontuacao(novaPontuacao)
+    setVenceu(novoVenceu)
+
+    // Salvar no localStorage
+    salvarEstado(cartela, novasMarcadas, novaPontuacao, novoVenceu)
+  }
+
+  // Copiar PIX
+  const copiarPix = async () => {
+    const chavePix = "seu-pix-aqui@email.com" // Substitua pela sua chave PIX
+    try {
+      await navigator.clipboard.writeText(chavePix)
+      setPixCopiado(true)
+      setTimeout(() => setPixCopiado(false), 2000)
+    } catch (err) {
+      // Fallback para dispositivos que não suportam clipboard API
+      const textArea = document.createElement("textarea")
+      textArea.value = chavePix
+      document.body.appendChild(textArea)
+      textArea.select()
+      document.execCommand("copy")
+      document.body.removeChild(textArea)
+      setPixCopiado(true)
+      setTimeout(() => setPixCopiado(false), 2000)
     }
   }
 
-  // Gerar cartela inicial
+  // Carregar estado inicial
   useEffect(() => {
-    gerarCartela()
+    const estadoSalvo = carregarEstado()
+
+    if (estadoSalvo) {
+      // Carregar estado salvo
+      setCartela(estadoSalvo.cartela)
+      setMarcadas(estadoSalvo.marcadas)
+      setPontuacao(estadoSalvo.pontuacao)
+      setVenceu(estadoSalvo.venceu)
+    } else {
+      // Gerar nova cartela se não houver estado salvo
+      gerarCartela()
+    }
   }, [])
 
   return (
@@ -135,7 +218,7 @@ export default function DebateBingo() {
                   disabled={venceu}
                   title={frase} // Tooltip para ver frase completa
                 >
-                  <span className="sm:line-clamp-4 hyphens-auto text-center w-full">
+                  <span className="line-clamp-3 sm:line-clamp-4 break-words hyphens-auto text-center w-full">
                     {frase}
                   </span>
                 </button>
@@ -168,7 +251,60 @@ export default function DebateBingo() {
             <p>• Clique nas células quando ouvir as frases durante o debate</p>
             <p>• Vença completando uma linha, coluna, diagonal ou cartela inteira</p>
             <p>• Use o botão "Nova Cartela" para embaralhar as frases</p>
-            <p>• Edite o array FRASES_DEBATE no código para personalizar</p>
+          </CardContent>
+        </Card>
+
+        {/* Componente de Doação */}
+        <Card className="mt-6 bg-gradient-to-r from-pink-500/20 to-purple-500/20 backdrop-blur border-pink-300/30">
+          <CardHeader className="text-center">
+            <CardTitle className="text-white flex items-center justify-center gap-2 text-lg sm:text-xl">
+              <Heart className="w-5 h-5 text-pink-400" />
+              Gostou do Bingo?
+              <Coffee className="w-5 h-5 text-yellow-400" />
+            </CardTitle>
+          </CardHeader>
+          <CardContent className="text-center space-y-4">
+            <p className="text-gray-300 text-sm sm:text-base">
+              Se este bingo tornou seu debate mais divertido, considere fazer uma contribuição! ☕
+            </p>
+            <p className="text-gray-400 text-xs sm:text-sm">
+              Sua doação ajuda a manter projetos como este funcionando 💜
+            </p>
+
+            <div className="bg-white/10 rounded-lg p-4 border border-white/20">
+              <p className="text-white text-sm mb-3 font-medium">Chave PIX:</p>
+              <div className="flex items-center gap-2 bg-black/30 rounded-md p-3">
+                <code className="text-green-400 text-xs sm:text-sm flex-1 break-all">e4aef5ee-24fc-4591-b4d3-d31740464256
+                </code>
+                <Button
+                  onClick={copiarPix}
+                  size="sm"
+                  variant="outline"
+                  className={`
+                    transition-all duration-300 gap-1 text-xs
+                    ${
+                      pixCopiado
+                        ? "bg-green-500 border-green-400 text-white"
+                        : "bg-white/10 border-white/30 text-white hover:bg-white/20"
+                    }
+                  `}
+                >
+                  {pixCopiado ? (
+                    <>
+                      <Check className="w-3 h-3" />
+                      Copiado!
+                    </>
+                  ) : (
+                    <>
+                      <Copy className="w-3 h-3" />
+                      Copiar
+                    </>
+                  )}
+                </Button>
+              </div>
+            </div>
+
+            <p className="text-gray-400 text-xs">Qualquer valor é muito bem-vindo! 🙏</p>
           </CardContent>
         </Card>
       </div>
